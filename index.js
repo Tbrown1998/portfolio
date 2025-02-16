@@ -1,48 +1,38 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const username = "OluwatosinAmosu"; // Replace with your GitHub username
-    const repoList = document.getElementById("repo-list");
+/* -----------------------------------------
+  Have focus outline only for keyboard users 
+ ---------------------------------------- */
 
-    async function fetchRepos() {
-        try {
-            const response = await fetch(`https://api.github.com/users/${username}/repos?sort=updated`);
+const handleFirstTab = (e) => {
+  if (e.key === 'Tab') {
+    document.body.classList.add('user-is-tabbing');
+    window.removeEventListener('keydown', handleFirstTab);
+    window.addEventListener('mousedown', handleMouseDownOnce);
+  }
+};
 
-            if (!response.ok) {
-                throw new Error(`GitHub API returned status: ${response.status}`);
-            }
+const handleMouseDownOnce = () => {
+  document.body.classList.remove('user-is-tabbing');
+  window.removeEventListener('mousedown', handleMouseDownOnce);
+  window.addEventListener('keydown', handleFirstTab);
+};
 
-            const repos = await response.json();
+window.addEventListener('keydown', handleFirstTab);
 
-            if (repos.length === 0) {
-                repoList.innerHTML = "<p>No repositories found.</p>";
-                return;
-            }
+const backToTopButton = document.querySelector(".back-to-top");
+let isBackToTopRendered = false;
 
-            repos.forEach(repo => {
-                const repoItem = document.createElement("div");
-                repoItem.classList.add("work__box");
+const alterStyles = (isBackToTopRendered) => {
+  backToTopButton.style.visibility = isBackToTopRendered ? "visible" : "hidden";
+  backToTopButton.style.opacity = isBackToTopRendered ? 1 : 0;
+  backToTopButton.style.transform = isBackToTopRendered ? "scale(1)" : "scale(0)";
+};
 
-                repoItem.innerHTML = `
-                    <div class="work__text">
-                        <h3>${repo.name}</h3>
-                        <p>${repo.description || "No description available."}</p>
-                        <ul class="work__list">
-                            <li>${repo.language || "Not specified"}</li>
-                        </ul>
-                        <div class="work__links">
-                            <a href="${repo.html_url}" target="_blank" class="link__text">
-                                View Repository <span>&rarr;</span>
-                            </a>
-                        </div>
-                    </div>
-                `;
-
-                repoList.appendChild(repoItem);
-            });
-        } catch (error) {
-            console.error("Error fetching repositories:", error);
-            repoList.innerHTML = `<p style="color: red;">Error loading repositories. Check console for details.</p>`;
-        }
-    }
-
-    fetchRepos();
+window.addEventListener("scroll", () => {
+  if (window.scrollY > 700) {
+    isBackToTopRendered = true;
+    alterStyles(isBackToTopRendered);
+  } else {
+    isBackToTopRendered = false;
+    alterStyles(isBackToTopRendered);
+  }
 });
