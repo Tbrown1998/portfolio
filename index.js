@@ -43,7 +43,7 @@ window.addEventListener("scroll", () => {
 
 // Fetch GitHub Repositories
 const fetchGitHubRepos = async () => {
-  const username = "your-github-username"; // Replace with your GitHub username
+  const username = "Tbrown1998"; // Replace with your GitHub username
   const apiUrl = `https://api.github.com/users/${username}/repos?sort=updated&direction=desc`;
 
   try {
